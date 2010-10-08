@@ -55,6 +55,7 @@ def run_game():
     SCREEN_WIDTH, SCREEN_HEIGHT = 300, 400
     BG_COLOR = 150, 150, 80
     N_CREEPS = 10
+    CREEP_SPEED = 2
 
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), 0, 32)
@@ -63,7 +64,9 @@ def run_game():
     # Create N_CREEPS random creeps.
     creeps = []    
     for i in range(N_CREEPS):
-        creeps.append(Creep(screen, 'graycreep.png', (randint(0,SCREEN_WIDTH),randint(0,SCREEN_HEIGHT)), randint(0,360), 2))
+        creeps.append(Creep(screen, 'graycreep.png', 
+                            (randint(0,SCREEN_WIDTH),randint(0,SCREEN_HEIGHT)), 
+                            randint(0,360), CREEP_SPEED))
 
     while True:
         clock.tick(40)
