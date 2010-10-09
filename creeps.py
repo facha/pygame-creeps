@@ -54,11 +54,13 @@ class MapView(Sprite):
         Sprite.__init__(self)
         self.screen = screen
         self.model = model
-        self.base_image = pygame.image.load('graycreep.png').convert_alpha()
+        self.images = {}
+        self.images['creep'] = pygame.image.load('graycreep.png').convert_alpha()
 
     def blitme(self):
         for obj in self.model.objects:
-            image = pygame.transform.scale(self.base_image, (obj.size*2, obj.size*2))
+            image = self.images[obj.name]
+            image = pygame.transform.scale(image, (obj.size*2, obj.size*2))
             image = pygame.transform.rotate(image, -obj.direction)
             draw_pos = image.get_rect().move(obj.pos.x - obj.size, obj.pos.y - obj.size)
             self.screen.blit(image, draw_pos)
@@ -67,12 +69,12 @@ def run_game():
     SCREEN_WIDTH, SCREEN_HEIGHT = 300, 400
     BG_COLOR = 150, 150, 80
     N_CREEPS = 10
-    CREEP_SIZE = 8 #creep radius
+    CREEP_RADUIS = 8 #creep radius
     CREEP_SPEED = 2
 
     environment = MapModel(SCREEN_WIDTH, SCREEN_HEIGHT)
     for i in range(N_CREEPS):
-        creep = CreepModel(CREEP_SIZE , (randint(0,SCREEN_WIDTH),randint(0,SCREEN_HEIGHT)), randint(0,360), CREEP_SPEED)
+        creep = CreepModel(CREEP_RADIUS , (randint(0,SCREEN_WIDTH),randint(0,SCREEN_HEIGHT)), randint(0,360), CREEP_SPEED)
         environment.addObject(creep)
 
     pygame.init()
