@@ -58,9 +58,6 @@ class MapView(Sprite):
         self.image = self.base_image
         self.image_w, self.image_h = self.image.get_size()
 
-    def update(self):
-        pass
-        
     def blitme(self):
         for obj in self.model.objects:
             draw_pos = self.image.get_rect().move(
