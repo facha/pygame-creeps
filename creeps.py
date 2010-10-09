@@ -55,16 +55,13 @@ class MapView(Sprite):
         self.screen = screen
         self.model = model
         self.base_image = pygame.image.load('graycreep.png').convert_alpha()
-        self.image = self.base_image
-        self.image_w, self.image_h = self.image.get_size()
 
     def blitme(self):
         for obj in self.model.objects:
-            image = base_image.
-            draw_pos = self.image.get_rect().move(
-                obj.pos.x - self.image_w / 2, 
-                obj.pos.y - self.image_h / 2)
-            self.screen.blit(self.image, draw_pos)
+            image = pygame.transform.scale(self.base_image, (obj.size*2, obj.size*2))
+            image = pygame.transform.rotate(image, -obj.direction)
+            draw_pos = image.get_rect().move(obj.pos.x - obj.size, obj.pos.y - obj.size)
+            self.screen.blit(image, draw_pos)
     
 def run_game():
     SCREEN_WIDTH, SCREEN_HEIGHT = 300, 400
