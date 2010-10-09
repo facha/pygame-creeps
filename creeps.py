@@ -11,9 +11,29 @@ class Pos:
         self.x = pos[0]
         self.y = pos[1]
 
-class Model:
-    def __init__(self, init_position, init_direction, speed):
-        pass
+class CreepModel:
+    def __init__(self, size, init_position, init_direction, speed):
+        self.size = size
+        self.pos = Pos(init_position)
+        self.direction = init_direction
+        self.speed = speed
+
+    def update(self):
+        self.direction = self.direction % 360
+        self.pos.x = self.pos.x + cos(radians(self.direction))*self.speed
+        self.pos.y = self.pos.y + sin(radians(self.direction))*self.speed
+        if self.pos.x < bounds_rect.left:
+            self.pos.x = bounds_rect.left
+            self.direction = 180 - self.direction
+        elif self.pos.x > bounds_rect.right:
+            self.pos.x = bounds_rect.right
+            self.direction = 180 - self.direction
+        elif self.pos.y < bounds_rect.top:
+            self.pos.y = bounds_rect.top
+            self.direction = -self.direction
+        elif self.pos.y > bounds_rect.bottom:
+            self.pos.y = bounds_rect.bottom
+            self.direction = -self.direction
 
 class Creep(Sprite):
     def __init__(self, screen, filename, init_position, init_direction, speed):
