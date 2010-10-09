@@ -60,6 +60,7 @@ class MapView(Sprite):
 
     def blitme(self):
         for obj in self.model.objects:
+            image = base_image.
             draw_pos = self.image.get_rect().move(
                 obj.pos.x - self.image_w / 2, 
                 obj.pos.y - self.image_h / 2)
@@ -69,11 +70,12 @@ def run_game():
     SCREEN_WIDTH, SCREEN_HEIGHT = 300, 400
     BG_COLOR = 150, 150, 80
     N_CREEPS = 10
+    CREEP_SIZE = 8
     CREEP_SPEED = 2
 
     environment = MapModel(SCREEN_WIDTH, SCREEN_HEIGHT)
     for i in range(N_CREEPS):
-        creep = CreepModel(5 , (randint(0,SCREEN_WIDTH),randint(0,SCREEN_HEIGHT)), randint(0,360), CREEP_SPEED)
+        creep = CreepModel(CREEP_SIZE , (randint(0,SCREEN_WIDTH),randint(0,SCREEN_HEIGHT)), randint(0,360), CREEP_SPEED)
         environment.addObject(creep)
 
     pygame.init()
