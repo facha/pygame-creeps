@@ -66,15 +66,15 @@ class MapView(Sprite):
             self.screen.blit(image, draw_pos)
     
 def run_game():
-    SCREEN_WIDTH, SCREEN_HEIGHT = 300, 400
+    SCREEN_WIDTH, SCREEN_HEIGHT = 200, 300
     BG_COLOR = 150, 150, 80
     N_CREEPS = 10
-    CREEP_RADUIS = 8 #creep radius
+    CREEP_RADIUS = 8 #creep radius
     CREEP_SPEED = 2
 
     environment = MapModel(SCREEN_WIDTH, SCREEN_HEIGHT)
     for i in range(N_CREEPS):
-        creep = CreepModel(CREEP_RADIUS , (randint(0,SCREEN_WIDTH),randint(0,SCREEN_HEIGHT)), randint(0,360), CREEP_SPEED)
+        creep = CreepModel(CREEP_RADIUS, (randint(0,SCREEN_WIDTH),randint(0,SCREEN_HEIGHT)), randint(0,360), CREEP_SPEED)
         environment.addObject(creep)
 
     pygame.init()
