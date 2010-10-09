@@ -67,7 +67,7 @@ def run_game():
     SCREEN_WIDTH, SCREEN_HEIGHT = 300, 400
     BG_COLOR = 150, 150, 80
     N_CREEPS = 10
-    CREEP_SIZE = 8
+    CREEP_SIZE = 8 #creep radius
     CREEP_SPEED = 2
 
     environment = MapModel(SCREEN_WIDTH, SCREEN_HEIGHT)
