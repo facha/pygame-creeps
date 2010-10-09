@@ -12,7 +12,8 @@ class Pos:
         self.y = pos[1]
 
 class Model:
-    def __init__(self,
+    def __init__(self, init_position, init_direction, speed):
+        pass
 
 class Creep(Sprite):
     def __init__(self, screen, filename, init_position, init_direction, speed):
