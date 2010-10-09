@@ -11,6 +11,9 @@ class Pos:
         self.x = pos[0]
         self.y = pos[1]
 
+class Model:
+    def __init__(self,
+
 class Creep(Sprite):
     def __init__(self, screen, filename, init_position, init_direction, speed):
         Sprite.__init__(self)
