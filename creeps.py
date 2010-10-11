@@ -40,6 +40,8 @@ class MapModel:
         self.getDistanceMatrix()
         for obj in self.objects:
             obj.update()
+            obj.pos.x = obj.pos.x + cos(radians(obj.direction))*obj.speed
+            obj.pos.y = obj.pos.y + sin(radians(obj.direction))*obj.speed
             if obj.pos.x < obj.size:
                 obj.pos.x = obj.size
                 obj.direction = 180 - obj.direction
@@ -68,11 +70,10 @@ class CreepModel(BaseObjectModel):
         self.name = 'creep'
         self.direction = init_direction #Creep direction (in degrees)
         self.speed = speed #Creep speed
+        self.view = None
 
     def update(self):
         self.direction = self.direction % 360
-        self.pos.x = self.pos.x + cos(radians(self.direction))*self.speed
-        self.pos.y = self.pos.y + sin(radians(self.direction))*self.speed
 
 class MapView(Sprite):
     def __init__(self, screen, model):
