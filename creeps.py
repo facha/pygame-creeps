@@ -53,11 +53,19 @@ class MapModel:
                 obj.pos.y = self.height - obj.size
                 obj.direction = -obj.direction
 
-class CreepModel:
+class BaseObjectModel:
+    def __init__(self, size, init_position):
+        self.name = 'base'
+        self.size = size #object radius
+        self.pos = Pos(init_position) #position on map
+
+    def update(self):
+        pass
+
+class CreepModel(BaseObjectModel):
     def __init__(self, size, init_position, init_direction, speed):
+        BaseObjectModel.__init__(self,size,init_position)
         self.name = 'creep'
-        self.size = size #Creep Radius
-        self.pos = Pos(init_position) #Creep position on map
         self.direction = init_direction #Creep direction (in degrees)
         self.speed = speed #Creep speed
 
