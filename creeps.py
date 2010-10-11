@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 import os, sys
 from random import randint, choice
-from math import sin, cos, radians
+from math import sin, cos, radians, pow, sqrt
+import numpy
 
 import pygame
 from pygame.sprite import Sprite
@@ -13,14 +14,30 @@ class Pos:
 
 class MapModel:
     def __init__(self, width, height):
+        self.visibility = 100
         self.width = width
         self.height = height
         self.objects = []
+        self.obj_distance_matrix = None
 
     def addObject(self, obj):
         self.objects.append(obj)
 
+    def getDistanceMatrix(self):
+        N = len(self.objects)
+        self.obj_distance_matrix = numpy.zeros(shape=(N,N))
+        for i in range(0,N):
+            for j in range(i,N):
+                if i == j:
+                    self.obj_distance_matrix[i,j] = 0
+                else:
+                    dx = self.objects[i].pos.x - self.objects[j].pos.x
+                    dy = self.objects[i].pos.y - self.objects[j].pos.y
+                    self.obj_distance_matrix[i,j] = sqrt(pow(dx, 2) + pow(dy, 2))
+                    self.obj_distance_matrix[j,i] = self.obj_distance_matrix[i,j]
+
     def update(self):
+        self.getDistanceMatrix()
         for obj in self.objects:
             obj.update()
             if obj.pos.x < obj.size:
@@ -70,7 +87,7 @@ def run_game():
     BG_COLOR = 150, 150, 80
     N_CREEPS = 10
     CREEP_RADIUS = 8 #creep radius
-    CREEP_SPEED = 2
+    CREEP_SPEED = 3
 
     environment = MapModel(SCREEN_WIDTH, SCREEN_HEIGHT)
     for i in range(N_CREEPS):
