@@ -36,9 +36,22 @@ class MapModel:
                     self.obj_distance_matrix[i,j] = sqrt(pow(dx, 2) + pow(dy, 2))
                     self.obj_distance_matrix[j,i] = self.obj_distance_matrix[i,j]
 
+    def getObjView(self, obj):
+        """ return a list of visible objects """
+        N = len(self.objects)
+        n = self.objects.index(obj)
+        view = []
+        for i in range(0,N):
+            if i != n:
+                if self.obj_distance_matrix[i,n] <= self.visibility:
+                    visible_object = {'obj_type': self.objects[i].obj_type, 'size': self.objects[i].size, 'x': self.objects[i].pos.x, 'y': self.objects[i].pos.y}
+                    view.append(visible_object)
+        return view
+
     def update(self):
         self.getDistanceMatrix()
         for obj in self.objects:
+            obj.view = self.getObjView(obj)
             obj.update()
             obj.pos.x = obj.pos.x + cos(radians(obj.direction))*obj.speed
             obj.pos.y = obj.pos.y + sin(radians(obj.direction))*obj.speed
@@ -57,7 +70,7 @@ class MapModel:
 
 class BaseObjectModel:
     def __init__(self, size, init_position):
-        self.name = 'base'
+        self.obj_type = 'base'
         self.size = size #object radius
         self.pos = Pos(init_position) #position on map
 
@@ -67,7 +80,7 @@ class BaseObjectModel:
 class CreepModel(BaseObjectModel):
     def __init__(self, size, init_position, init_direction, speed):
         BaseObjectModel.__init__(self,size,init_position)
-        self.name = 'creep'
+        self.obj_type = 'creep'
         self.direction = init_direction #Creep direction (in degrees)
         self.speed = speed #Creep speed
         self.view = None
@@ -85,7 +98,7 @@ class MapView(Sprite):
 
     def blitme(self):
         for obj in self.model.objects:
-            image = self.images[obj.name]
+            image = self.images[obj.obj_type]
             image = pygame.transform.scale(image, (obj.size*2, obj.size*2))
             image = pygame.transform.rotate(image, -obj.direction)
             draw_pos = image.get_rect().move(obj.pos.x - obj.size, obj.pos.y - obj.size)
