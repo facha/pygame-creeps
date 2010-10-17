@@ -36,6 +36,20 @@ class MapModel:
                     self.obj_distance_matrix[i,j] = sqrt(pow(dx, 2) + pow(dy, 2))
                     self.obj_distance_matrix[j,i] = self.obj_distance_matrix[i,j]
 
+    def removeCollided(self):
+        for_removal = []
+        N = len(self.objects)
+        for i in range(0,N):
+            for j in range(i+1,N):
+                if self.obj_distance_matrix[i,j] <= self.objects[i].size + self.objects[j].size:
+                    for_removal.append(i)
+                    for_removal.append(j)
+        for_removal = list(set(for_removal))
+        for_removal.sort(reverse=True)
+        for obj_index in for_removal:
+            del self.objects[obj_index]
+
+
     def getObjView(self, obj):
         """ return a list of visible objects """
         N = len(self.objects)
@@ -51,6 +65,7 @@ class MapModel:
 
     def update(self):
         self.getDistanceMatrix()
+        self.removeCollided()
         for obj in self.objects:
             obj.view = self.getObjView(obj)
             obj.update()
@@ -97,6 +112,9 @@ class CreepModel(BaseObjectModel):
             self.direction = -self.direction
         elif self.pos.y >= height - start_acting_at:
             self.direction = -self.direction
+
+    def dontCollide(self):
+        start_acting_at = self.size + 10
 
     def update(self):
         self.direction = self.direction % 360
