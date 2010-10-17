@@ -33,15 +33,18 @@ class MapModel:
                 else:
                     dx = self.objects[i].pos.x - self.objects[j].pos.x
                     dy = self.objects[i].pos.y - self.objects[j].pos.y
-                    self.obj_distance_matrix[i,j] = sqrt(pow(dx, 2) + pow(dy, 2))
-                    self.obj_distance_matrix[j,i] = self.obj_distance_matrix[i,j]
+                    self.obj_distance_matrix[i,j] = \
+                        sqrt(pow(dx, 2) + pow(dy, 2))
+                    self.obj_distance_matrix[j,i] = \
+                        self.obj_distance_matrix[i,j]
 
     def removeCollided(self):
         for_removal = []
         N = len(self.objects)
         for i in range(0,N):
             for j in range(i+1,N):
-                if self.obj_distance_matrix[i,j] <= self.objects[i].size + self.objects[j].size:
+                if self.obj_distance_matrix[i,j] <= self.objects[i].size + \
+                                                    self.objects[j].size:
                     for_removal.append(i)
                     for_removal.append(j)
         for_removal = list(set(for_removal))
@@ -63,7 +66,8 @@ class MapModel:
                                       'y': self.objects[i].pos.y, 
                                       'distance': self.obj_distance_matrix[i,n]}
                     view.append(visible_object)
-        view.append({'obj_type': 'bounds', 'width': self.width, 'height': self.height})
+        view.append({'obj_type': 'bounds', 'width': self.width, 
+                     'height': self.height})
         return view
 
     def update(self):
@@ -100,7 +104,7 @@ class CreepModel(BaseObjectModel):
         self.direction = init_direction #Creep direction (in degrees)
         self.speed = speed #Creep speed
         self.min_speed = 0.1 * speed
-        self.max_speed = speed
+        self.max_speed = 2.0 * speed
         self.view = None
 
     def setSpeed(self, speed):
@@ -112,7 +116,8 @@ class CreepModel(BaseObjectModel):
             self.speed = speed
 
     def reflectFromBounds(self):
-        start_acting_at = self.size #if distance is less then that, change direction
+        start_acting_at = self.size # if distance is less then that,
+                                    # change direction
         bounds = self.view.pop()
         width = bounds['width']
         height = bounds['height']
@@ -141,7 +146,7 @@ class CreepModel(BaseObjectModel):
             next_step_distance = sqrt(pow(dx, 2) + pow(dy, 2))
             return next_step_distance - current_distance
             
-        start_acting_at = self.size + 30
+        start_acting_at = self.size + 12
         collision_danger = False
         for obj in self.view:
             if obj['obj_type'] == 'creep':
@@ -152,7 +157,7 @@ class CreepModel(BaseObjectModel):
                         distances[angle] = getDistanceDelta(angle)
                     self.direction += max(distances, key=distances.get)
         if collision_danger == True:
-            self.setSpeed(self.speed * 0.5)
+            self.setSpeed(self.speed * 0.1)
         else:
             self.setSpeed(self.speed * 1.1)
 
@@ -167,8 +172,10 @@ class MapView(Sprite):
         self.screen = screen
         self.model = model
         self.images = {}
-        self.images['creep'] = pygame.image.load('graycreep.png').convert_alpha()
-        self.images['base'] = pygame.image.load('base.png').convert_alpha()
+        self.images['creep'] = \
+            pygame.image.load('graycreep.png').convert_alpha()
+        self.images['base'] = \
+            pygame.image.load('base.png').convert_alpha()
 
     def blitme(self):
         for obj in self.model.objects:
@@ -176,19 +183,22 @@ class MapView(Sprite):
             image = pygame.transform.scale(image, (obj.size*2, obj.size*2))
             if obj.obj_type == 'creep':
                 image = pygame.transform.rotate(image, -obj.direction)
-            draw_pos = image.get_rect().move(obj.pos.x - obj.size, obj.pos.y - obj.size)
+            draw_pos = image.get_rect().move(obj.pos.x - obj.size,
+                                             obj.pos.y - obj.size)
             self.screen.blit(image, draw_pos)
     
 def run_game():
     SCREEN_WIDTH, SCREEN_HEIGHT = 200,300
     BG_COLOR = 150, 150, 80
-    N_CREEPS = 30
+    N_CREEPS = 10
     CREEP_RADIUS = 8 #creep radius
-    CREEP_SPEED = 3
+    CREEP_SPEED = 1
 
     environment = MapModel(SCREEN_WIDTH, SCREEN_HEIGHT)
     for i in range(N_CREEPS):
-        creep = CreepModel(CREEP_RADIUS, (randint(0,SCREEN_WIDTH),randint(0,SCREEN_HEIGHT)), randint(0,360), CREEP_SPEED)
+        creep = CreepModel(CREEP_RADIUS, (randint(0,SCREEN_WIDTH),
+                           randint(0,SCREEN_HEIGHT)), randint(0,360),
+                           CREEP_SPEED)
         environment.addObject(creep)
 
     pygame.init()
