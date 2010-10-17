@@ -58,7 +58,11 @@ class MapModel:
         for i in range(0,N):
             if i != n:
                 if self.obj_distance_matrix[i,n] <= self.visibility:
-                    visible_object = {'obj_type': self.objects[i].obj_type, 'size': self.objects[i].size, 'x': self.objects[i].pos.x, 'y': self.objects[i].pos.y, 'distance': self.obj_distance_matrix[i,n]}
+                    visible_object = {'obj_type': self.objects[i].obj_type,
+                                      'size': self.objects[i].size, 
+                                      'x': self.objects[i].pos.x, 
+                                      'y': self.objects[i].pos.y, 
+                                      'distance': self.obj_distance_matrix[i,n]}
                     view.append(visible_object)
         view.append({'obj_type': 'bounds', 'width': self.width, 'height': self.height})
         return view
@@ -96,7 +100,6 @@ class CreepModel(BaseObjectModel):
         self.obj_type = 'creep'
         self.direction = init_direction #Creep direction (in degrees)
         self.speed = speed #Creep speed
-        self.turnability = choice([-10,10])
         self.view = None
 
     def reflectFromBounds(self):
@@ -114,11 +117,34 @@ class CreepModel(BaseObjectModel):
             self.direction = -self.direction
 
     def dontCollide(self):
-        start_acting_at = self.size + 10
+        def getDistanceDelta(angle_delta):
+            x = self.pos.x
+            y = self.pos.y
+            direction = self.direction + angle_delta
+            speed = self.speed
+            x1 = obj['x']
+            y1 = obj['y']
+            current_distance = obj['distance']
+            x = x + cos(radians(direction))*speed
+            y = y + sin(radians(direction))*speed
+            dx = x - x1
+            dy = y - y1
+            next_step_distance = sqrt(pow(dx, 2) + pow(dy, 2))
+            return next_step_distance - current_distance
+            
+        start_acting_at = self.size + 20
+        for obj in self.view:
+            if obj['obj_type'] == 'creep':
+                if obj['distance'] < start_acting_at:
+                    distances = {}
+                    for angle in (-45, 45):
+                        distances[angle] = getDistanceDelta(angle)
+                    self.direction += max(distances, key=distances.get)
 
     def update(self):
         self.direction = self.direction % 360
         self.reflectFromBounds()
+        self.dontCollide()
 
 class MapView(Sprite):
     def __init__(self, screen, model):
