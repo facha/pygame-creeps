@@ -49,7 +49,6 @@ class MapModel:
         for obj_index in for_removal:
             del self.objects[obj_index]
 
-
     def getObjView(self, obj):
         """ return a list of visible objects """
         N = len(self.objects)
@@ -100,7 +99,17 @@ class CreepModel(BaseObjectModel):
         self.obj_type = 'creep'
         self.direction = init_direction #Creep direction (in degrees)
         self.speed = speed #Creep speed
+        self.min_speed = 0.1 * speed
+        self.max_speed = speed
         self.view = None
+
+    def setSpeed(self, speed):
+        if speed > self.max_speed:
+            self.speed = self.max_speed
+        elif speed < self.min_speed:
+            self.speed = self.min_speed
+        else:
+            self.speed = speed
 
     def reflectFromBounds(self):
         start_acting_at = self.size #if distance is less then that, change direction
@@ -132,14 +141,20 @@ class CreepModel(BaseObjectModel):
             next_step_distance = sqrt(pow(dx, 2) + pow(dy, 2))
             return next_step_distance - current_distance
             
-        start_acting_at = self.size + 20
+        start_acting_at = self.size + 30
+        collision_danger = False
         for obj in self.view:
             if obj['obj_type'] == 'creep':
                 if obj['distance'] < start_acting_at:
+                    collision_danger = True
                     distances = {}
-                    for angle in (-45, 45):
+                    for angle in (-135, -45, 45, 135):
                         distances[angle] = getDistanceDelta(angle)
                     self.direction += max(distances, key=distances.get)
+        if collision_danger == True:
+            self.setSpeed(self.speed * 0.5)
+        else:
+            self.setSpeed(self.speed * 1.1)
 
     def update(self):
         self.direction = self.direction % 360
@@ -167,7 +182,7 @@ class MapView(Sprite):
 def run_game():
     SCREEN_WIDTH, SCREEN_HEIGHT = 200,300
     BG_COLOR = 150, 150, 80
-    N_CREEPS = 10
+    N_CREEPS = 30
     CREEP_RADIUS = 8 #creep radius
     CREEP_SPEED = 3
 
