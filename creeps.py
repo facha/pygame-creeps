@@ -85,31 +85,18 @@ class CreepModel(BaseObjectModel):
         self.view = None
 
     def reflectFromBounds(self):
-        start_acting_at = 5 + self.size #if distance is less then that, change direction
-        angle_delta = 5
+        start_acting_at = self.size #if distance is less then that, change direction
         bounds = self.view.pop()
         width = bounds['width']
         height = bounds['height']
-        if self.pos.x < start_acting_at:
-            if self.direction >= 180:
-                self.direction += angle_delta
-            else:
-                self.direction -= angle_delta
-        if self.pos.x > width - start_acting_at:
-            if self.direction < 180:
-                self.direction += angle_delta
-            else:
-                self.direction -= angle_delta
-        if self.pos.y < start_acting_at:
-            if self.direction >= 90 and self.direction < 270:
-                self.direction -= angle_delta
-            else:
-                self.direction += angle_delta
-        if self.pos.y > height - start_acting_at:
-            if self.direction < 90 or self.direction >= 270:
-                self.direction -= angle_delta
-            else:
-                self.direction += angle_delta
+        if self.pos.x <= start_acting_at:
+            self.direction = 180 - self.direction
+        elif self.pos.x >= width - start_acting_at:
+            self.direction = 180 - self.direction
+        elif self.pos.y <= start_acting_at:
+            self.direction = -self.direction
+        elif self.pos.y >= height - start_acting_at:
+            self.direction = -self.direction
 
     def update(self):
         self.direction = self.direction % 360
@@ -138,7 +125,7 @@ def run_game():
     BG_COLOR = 150, 150, 80
     N_CREEPS = 10
     CREEP_RADIUS = 8 #creep radius
-    CREEP_SPEED = 1
+    CREEP_SPEED = 3
 
     environment = MapModel(SCREEN_WIDTH, SCREEN_HEIGHT)
     for i in range(N_CREEPS):
